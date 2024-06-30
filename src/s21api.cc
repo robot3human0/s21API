@@ -17,7 +17,24 @@ s21Api::s21Api(const string email, const string password)
       Coalition(new Coalition_t(this)), Participant(new Participant_t(this)),
       Course(new Course_t(this)), Graph(new Graph_t(this)) {
 
-  // GetToken();
+  GetTokenS();
+
+  curl_ = curl_easy_init();
+  if (!curl_) {
+    throw runtime_error{"Curl initialiaztion failed"};
+  }
+
+  const string authorization = "Authorization: Bearer " + token_;
+  headers_ = curl_slist_append(headers_, "accept: application/json");
+  headers_ = curl_slist_append(headers_, authorization.c_str());
+}
+
+s21Api::s21Api(const string token)
+    : token_(token), Campus(new Campus_t(this)), Cluster(new Cluster_t(this)),
+      Event(new Event_t(this)), Sale(new Sale_t(this)),
+      Project(new Project_t(this)), Coalition(new Coalition_t(this)),
+      Participant(new Participant_t(this)), Course(new Course_t(this)),
+      Graph(new Graph_t(this)) {
 
   curl_ = curl_easy_init();
   if (!curl_) {
@@ -54,7 +71,7 @@ size_t s21Api::WriteCallback(void *contents, size_t size, size_t nmemb,
   return size * nmemb;
 }
 
-void s21Api::GetToken() {
+void s21Api::GetTokenS() {
   curl_ = curl_easy_init();
   if (!curl_) {
     throw runtime_error{"GetToken(): Curl initialiaztion failed"};
@@ -94,7 +111,7 @@ void s21Api::GetToken() {
       cerr << "Failed to parse Json repsponse" << endl;
     }
   }
-  cout << "Got token:" << token_ << endl;
+
   curl_slist_free_all(header);
   curl_easy_cleanup(curl_);
 }
@@ -102,7 +119,7 @@ void s21Api::GetToken() {
 string s21Api::SendRequest(const string &path) {
   string buff;
   string fullPath = baseUrl_ + path;
-  cout << fullPath << endl;
+
   curl_easy_setopt(curl_, CURLOPT_URL, fullPath.c_str());
   curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers_);
   curl_easy_setopt(curl_, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -157,6 +174,8 @@ void s21Api::ParamsToStr(string &s, const int64_t limit, const int64_t offset,
     }
   }
 }
+
+const string s21Api::GetToken() const { return token_; }
 
 /////////////////////////CAMPUS//////////////////////////////////////
 

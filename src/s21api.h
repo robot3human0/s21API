@@ -30,10 +30,17 @@ class s21Api {
 
 public:
   s21Api() = delete;
-  s21Api(s21Api &o) = delete;
-  s21Api(s21Api &&o) = delete;
+  s21Api(const s21Api &) = delete;
+  s21Api operator=(const s21Api &) = delete;
+  s21Api(s21Api &&) = delete;
+  s21Api &operator=(s21Api &&) = delete;
+
   explicit s21Api(const std::string email, const std::string password);
+  explicit s21Api(const std::string token);
+
   ~s21Api();
+
+  const std::string GetToken() const;
 
   Campus_t *Campus;
   Cluster_t *Cluster;
@@ -48,7 +55,7 @@ public:
 private:
   static size_t WriteCallback(void *contents, size_t size, size_t nmemb,
                               void *userp);
-  void GetToken();
+  void GetTokenS();
   std::string SendRequest(const std::string &path);
   static void ParamsToStr(std::string &s, const int64_t limit = 0,
                           const int64_t offset = 0, bool occupied = false,
@@ -184,31 +191,7 @@ private:
   struct curl_slist *headers_ = nullptr;
   const std::string baseUrl_ =
       "https://edu-api.21-school.ru/services/21-school/api";
-  std::string token_ =
-      "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ5V29landCTmxROWtQVEpF"
-      "ZnFpVzRrc181Mk1KTWkwUHl2RHNKNlgzdlFZIn0."
-      "eyJleHAiOjE3MTk3NjA0MzQsImlhdCI6MTcxOTcyNDQzNCwianRpIjoiNmRlYzUyMjMtZGYx"
-      "Yy00ZDc0LThiZGYtNmI1NzU5ZGNjMzlmIiwiaXNzIjoiaHR0cHM6Ly9hdXRoLnNiZXJjbGFz"
-      "cy5ydS9hdXRoL3JlYWxtcy9FZHVQb3dlcktleWNsb2FrIiwiYXVkIjoiYWNjb3VudCIsInN1"
-      "YiI6Ijc5NDQwZjA1LTJmOTUtNGI1MS04ZjA0LTEyZDExZTA3NjkwYSIsInR5cCI6IkJlYXJl"
-      "ciIsImF6cCI6InMyMS1vcGVuLWFwaSIsInNlc3Npb25fc3RhdGUiOiJiOGJlZDU0YS0yN2E0"
-      "LTQyMmEtYTc1OC05MjFlZDkzZjdkODIiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpb"
-      "Imh0dHBzOi8vZWR1LjIxLXNjaG9vbC5ydSJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsi"
-      "b2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNz"
-      "Ijp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3Vu"
-      "dC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsImVt"
-      "YWlsX3ZlcmlmaWVkIjp0cnVlLCJ1c2VyX2lkIjoiZDk2MzUzMmQtYzI0ZS00NTE0LWFjNzAt"
-      "YzEyMzI5MGY3NmFiIiwibmFtZSI6Ik15ZXNoYSBTa2FhciIsImF1dGhfdHlwZV9jb2RlIjoi"
-      "ZGVmYXVsdCIsInByZWZlcnJlZF91c2VybmFtZSI6Im15ZXNoYXNrQHN0dWRlbnQuMjEtc2No"
-      "b29sLnJ1IiwiZ2l2ZW5fbmFtZSI6Ik15ZXNoYSIsImZhbWlseV9uYW1lIjoiU2thYXIiLCJl"
-      "bWFpbCI6Im15ZXNoYXNrQHN0dWRlbnQuMjEtc2Nob29sLnJ1In0."
-      "BTmLY5GRM98wSj1fbRAFPMiZ_"
-      "82p5vKs9X96q13hen9VjJHGR2etgdtIRs2QeYBwTBgm5qN2gRqQ2vJ4QOh4Cc0rufCiVDxU5"
-      "4DnLOGsqEIIDuMXU0nHKARD5kghSlAqGiVNuMciHtn6CaIBQuZtVv0golMYFsFqOTpZn4RBk"
-      "I4HTJWMRByOuPRt6FFjBKIaGy4DnvteaDBXqHpxC2FqCZBywx60OWBTkAYxo-"
-      "aTGPcaouxV8N2Hp_"
-      "OnpjVcsrK5CWuL4boP2c2oMq6MwztyDU8PNwsmn5JWE9AZAXptqYc00dXUuRvm7LftnNISJ6"
-      "gkBFmAGTtN9RMBpo8opn93WQ";
+  std::string token_;
   std::string email_;
   std::string pass_;
 };
